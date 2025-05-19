@@ -70,7 +70,17 @@ return x*x;
 int main(){
 std::cout << "[主线程] 开始执行...\n";
 
+“
+auto fut = std::async(std::launch::async, [](){
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    return 123;
+});
 
+”
+“
+std::future<int> futureResult = std::async(std::launch::async, computeSquare, 6);
+
+”
 return 0;
 }
 
@@ -144,6 +154,10 @@ async线程	执行 some_function() 的逻辑
 不是 async 那个线程阻塞，它反而是独立在工作！
 
 🧠 所以你说的反了：真正阻塞的是调用 .get() 的线程，通常是 主线程。
+
+
+-------------------------------------------------------------
+
 
 
 
