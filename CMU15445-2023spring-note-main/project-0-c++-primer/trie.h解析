@@ -5,3 +5,14 @@ TrieNode: 基本的Trie节点类
 TrieNodeWithValue<T>: 能够存储值的Trie节点类
 Trie: 主要的Trie树数据结构
 
+
+不熟悉的CPP语法：
+1：
+“
+ std::future<int>
+这是C++11引入的一个标准库类型
+用于表示一个异步操作的未来结果
+相当于一个"承诺"，表示某个值将在未来某个时间点可用
+通常与std::promise、std::async等一起使用来处理异步编程
+<int>表示这个future最终会提供一个整数类型的结果
+”
