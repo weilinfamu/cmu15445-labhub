@@ -1,0 +1,7 @@
+这个头文件定义了四个主要类:
+
+MoveBlocked: 一个特殊工具类，用于测试时阻止移动操作
+TrieNode: 基本的Trie节点类
+TrieNodeWithValue<T>: 能够存储值的Trie节点类
+Trie: 主要的Trie树数据结构
+
