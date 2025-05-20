@@ -25,6 +25,29 @@ class MoveBlocked {
   bool waited_{false};
   std::future<int> wait_;
 };
+--------------------------------------------------------------------------
+// 测试代码
+std::promise<int> p;
+std::future<int> f = p.get_future();
+
+// 创建MoveBlocked对象
+MoveBlocked blocked(std::move(f));
+
+// 启动一个线程5秒后设置值
+std::thread([&p]() {
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    std::cout << "设置值，解除阻塞！" << std::endl;
+    p.set_value(100);  // 这行代码会自动解除阻塞
+}).detach();
+
+std::cout << "开始移动操作..." << std::endl;
+// 这行会阻塞大约5秒
+auto blocked2 = std::move(blocked);
+std::cout << "移动操作完成！" << std::endl;
+
+
+
+
 --------------------------------------------------------------------------------------------------
 ✅ 那么，MoveBlocked(std::future<int> wait) 是什么意思？
 
