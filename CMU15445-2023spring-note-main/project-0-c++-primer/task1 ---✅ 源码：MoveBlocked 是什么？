@@ -31,6 +31,35 @@ class MoveBlocked {
 #include <future>	引入异步通信工具：std::promise 和 std::future
 
 
+#include <iostream>
+#include <thread>
+#include <future>  // 💡 future 就在这
+
+int Work() {
+  std::this_thread::sleep_for(std::chrono::seconds(2));  // 假装干2秒的活
+  return 42;  // 干完返回一个结果
+}
+
+int main() {
+
+//promise 是写端，future 是读端。通过这个 pair 实现线程间通信
+  std::promise<int> p;                      // 🎁 我创建一个“承诺”：我以后会给你一个 int
+  std::future<int> f = p.get_future();      // 📬 拿到对应的“收件箱 future”
+
+//[&p]：通过引用捕获 promise 对象
+  std::thread t([&p]() {                    // 💡 开个线程，干点事
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    p.set_value(42);                        // 💥 两秒后，结果来了！承诺兑现
+  });
+
+  std::cout << "等结果...\n";
+  int result = f.get();                     // ⏳ 卡住这里，一定等到结果为止
+  std::cout << "结果是：" << result << "\n";
+
+  t.join();
+}
+
+
 
 
 
