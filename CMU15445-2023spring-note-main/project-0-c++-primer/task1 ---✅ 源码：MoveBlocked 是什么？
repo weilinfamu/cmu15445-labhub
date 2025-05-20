@@ -1,0 +1,29 @@
+✅ 源码：MoveBlocked 是什么？
+cpp
+Copy
+Edit
+/// 一个特殊类型，用于测试中禁止移动构造和移动赋值操作
+class MoveBlocked {
+ public:
+  explicit MoveBlocked(std::future<int> wait) : wait_(std::move(wait)) {}
+
+  MoveBlocked(const MoveBlocked &) = delete;
+  MoveBlocked(MoveBlocked &&that) noexcept {
+    if (!that.waited_) {
+      that.wait_.get();
+    }
+    that.waited_ = waited_ = true;
+  }
+
+  auto operator=(const MoveBlocked &) -> MoveBlocked & = delete;
+  auto operator=(MoveBlocked &&that) noexcept -> MoveBlocked & {
+    if (!that.waited_) {
+      that.wait_.get();
+    }
+    that.waited_ = waited_ = true;
+    return *this;
+  }
+
+  bool waited_{false};
+  std::future<int> wait_;
+};
