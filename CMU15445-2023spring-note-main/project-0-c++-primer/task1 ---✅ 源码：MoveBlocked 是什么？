@@ -27,3 +27,11 @@ class MoveBlocked {
   bool waited_{false};
   std::future<int> wait_;
 };
+--------------------------------------------------------------------------------------------------
+#include <future>	引入异步通信工具：std::promise 和 std::future
+
+
+
+
+
+
