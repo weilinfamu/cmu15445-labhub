@@ -32,6 +32,123 @@ std::string(const std::string &&);  // 移动构造函数
 左值（lvalue）	有名字、有地址、可以取地址、能重复使用
 右值（rvalue）	临时的值，没有名字，不能重复使用，不能取地址
 
+------------------------------------------------------------------------------------------------------------------------------------------
+✅ 问题 1：如果没有移动构造函数，会编译错误吗？
+答案是：不会编译错误，但行为是：
+如果你 std::move(x)，但是类 没有定义“移动构造函数”或“移动赋值”，
+那编译器就会自动退回使用 拷贝构造函数 或 拷贝赋值运算符。
+struct A {
+    std::string name;
+
+    // 没有定义移动构造函数
+    A(const std::string& s) : name(s) {}
+    A(const A& other) : name(other.name) {
+        std::cout << "拷贝构造\n";
+    }
+};
+
+int main() {
+    A a("abc");
+    A b = std::move(a);  // 没有移动构造 → 会退回拷贝构造
+}
+拷贝构造
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+✅ 问题 2：指针被“移动”，还是左值吗？
+核心理解：
+指针变量本身依然是左值，但是它所指的资源可以被转移。
+
+int* p = new int(42);  // p 是左值
+int* q = p;            // 把地址复制给 q
+
+p = nullptr;           // p 释放所有权
+这里的行为是资源“手动移动”：
+
+p 是一个指针，是左值。
+
+q 得到了资源（堆上的 int）。
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+对象内部转移指针资源才叫“移动语义”
+比如：
+cpp
+
+struct Data {
+    int* ptr;
+
+    Data(Data&& other) {
+        ptr = other.ptr;
+        other.ptr = nullptr;  // 手动清空，让 other 不再拥有资源
+    }
+};
+
+Data(Data&& other) {
+    ptr = other.ptr;          // OK，other 是左值
+    ptr = std::move(other).ptr;  // 这才是“右值语义”
+}
+你必须使用 std::move(other)，才能把这个“有名字的右值引用变量”重新变成右值表达式。
+
+
+✅ 2. 回到你的例子：这两种写法行为是一样的吗？
+
+ptr = other.ptr;
+other.ptr = nullptr;
+这个是自定义资源转移行为，所以不需要 std::move()。
+
+你是在手动搬指针，然后清空原来的。
+
+#include<iostream>
+#include<cstring>
+using namespace std;
+struct MyString{
+    char* data;
+    
+    MyString(const char* s) {
+       std:: cout << "构造函数\n";
+        data = new char[strlen(s) + 1];
+        strcpy(data, s);
+    }
+    Mystring(const Mystring other)
+        {
+            std::cout << "拷贝构造函数\n";
+            data = new char[strlen(other.data) + 1];
+            strcpy(data, other.data);
+        }
+    MyString(MyString&&other){
+        std::cout << "移动构造函数\n";
+        data = other.data;
+        other.data = nullptr;
+    }
+
+  
+    // 析构函数
+    ~MyString() {
+        std::cout << "析构\n";
+        delete[] data;
+    }
+
+  
+    // 打印
+    void print() const {
+        if (data)
+            std::cout << "[" << data << "]\n";
+        else
+            std::cout << "[null]\n";
+    }
+
+  
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
