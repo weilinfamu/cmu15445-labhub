@@ -1,0 +1,75 @@
+1. explicit（关键字）
+作用：防止隐式类型转换。
+
+🎯 前提知识：什么是“隐式转换”和“explicit”
+在 C++ 里，如果你写了一个构造函数，并且它只有一个参数，C++ 编译器有时候会“自动调用”它，把一个值转换成你的类对象，这叫做 隐式类型转换（implicit conversion）。
+
+这种自动行为有时候会很危险，因为：
+
+看上去像赋值，其实是偷偷“调用构造函数”
+
+会让代码行为变得不明确、难以发现错误
+
+于是，我们用 explicit 关键字禁止编译器这样偷偷调用构造函数。
+
+----------------------------------------------------------------------------------
+2：这个 std::promise 是什么？
+👉 std::promise 是 C++ 标准库里的一个类，不是你自己定义的。
+
+它定义在头文件 #include <future> 中。
+
+它的作用是：给另一个线程传值，配合 std::future 一起使用。
+你可以把 promise 和 future 想象成 一根管道 pipe：
+
+promise 是写入端（write）
+
+future 是读取端（read）
+
+比如在 C 语言里你写 pipe：
+
+int fd[2];
+pipe(fd); // fd[0] 读，fd[1] 写
+
+
+它们是怎么配合工作的？
+创建一个 std::promise<int>，表示你“承诺”会提供一个 int。
+
+从这个 promise 中提取一个 std::future<int>，用来获取这个 int。
+
+在一个线程中调用 promise.set_value(值)。
+
+在另一个线程中调用 future.get()，会阻塞等待，直到值被设置。
+#include <iostream>
+#include <thread>
+#include <future>  // 引入 promise / future 库
+#include <chrono>  // 引入 sleep 用的时间库
+
+int main() {
+  // 1. 创建 promise 对象：你承诺“未来”会提供一个 int
+  std::promise<int> p;
+
+  // 2. 从 promise 拿到一个 future：你可以通过它拿到最终的结果
+  std::future<int> f = p.get_future();
+
+  // 3. 启动一个线程，模拟后台任务，最终设置值
+  std::thread worker([&p]() {
+    std::cout << "工作线程：准备中...\n";
+    std::this_thread::sleep_for(std::chrono::seconds(2));  // 模拟任务执行
+
+    std::cout << "工作线程：完成，设置值为 42\n";
+    p.set_value(42);  // 设置结果，f.get() 就能收到
+  });
+
+  // 4. 主线程：等待获取这个值（会阻塞，直到上面 set_value 调用）
+  std::cout << "主线程：等待工作线程返回结果...\n";
+  int result = f.get();  // 阻塞，直到 promise 设置值
+  std::cout << "主线程：收到结果 = " << result << std::endl;
+
+  // 5. 等待线程退出
+  worker.join();
+  return 0;
+}
+
+
+
+
