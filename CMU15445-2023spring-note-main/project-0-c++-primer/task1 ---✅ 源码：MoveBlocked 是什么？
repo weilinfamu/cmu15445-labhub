@@ -1,7 +1,5 @@
 ✅ 源码：MoveBlocked 是什么？
-cpp
-Copy
-Edit
+
 /// 一个特殊类型，用于测试中禁止移动构造和移动赋值操作
 class MoveBlocked {
  public:
@@ -28,7 +26,19 @@ class MoveBlocked {
   std::future<int> wait_;
 };
 --------------------------------------------------------------------------------------------------
+✅ 那么，MoveBlocked(std::future<int> wait) 是什么意思？
 
+std::future<int> f = ...;
+MoveBlocked m(std::move(f));  // ✅ 你把这个 future 交给 m 管理
+也就是说：
+
+MoveBlocked 的构造函数接收这个 “future” 对象
+
+它负责将来某个时间 .get() 拿到结果
+
+
+
+--------------------------------------------------------------------------------------------------
 ✅ std::promise / std::future 的本质：线程间的“一次性通知通道”
 ✅ 是谁写？谁读？
 对象	作用	谁使用
