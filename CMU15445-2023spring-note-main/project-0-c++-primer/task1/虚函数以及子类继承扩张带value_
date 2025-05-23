@@ -1,0 +1,41 @@
+🔎 第一部分：定义普通的 TrieNode
+
+class TrieNode {
+ public:
+  virtual auto Clone() const -> std::unique_ptr<TrieNode> {
+    return std::make_unique<TrieNode>();
+  }
+};
+
+template <class T>
+class TrieNodeWithValue : public TrieNode {
+ public:
+  auto Clone() const -> std::unique_ptr<TrieNode> override {
+    return std::make_unique<TrieNodeWithValue<T>>(value_);
+  }
+
+ private:
+  std::shared_ptr<T> value_;
+};
+
+
+template <class T>
+这是个模板类：带值的类型是任意的，比如 int、std::string 等
+
+T 是占位符，实际编译时会替换成具体类型
+
+class TrieNodeWithValue : public TrieNode
+这是 TrieNode 的子类（继承）
+
+表示这个节点不仅有 children，还有一个 value！
+
+std::shared_ptr<T> value_;
+保存这个节点的实际值，用 shared_ptr 是为了安全共享
+
+override 表示：这个函数是重写父类的 Clone()
+
+make_unique<TrieNodeWithValue<T>>(value_)：
+
+用原来的 value_ 重新构造了一个新节点
+
+✅ 这就是克隆！
