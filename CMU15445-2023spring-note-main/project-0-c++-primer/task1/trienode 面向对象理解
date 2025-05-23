@@ -20,3 +20,17 @@ children = {
   'b' → TrieNode,
   'c' → TrieNode
 }
+-----------------------------------------------
+
+✅ 问题：Trie 和 TrieNodeWithValue 是什么关系？怎么连接起来？
+📌 简洁回答：
+Trie 是“整个字典树”，而 TrieNodeWithValue<T> 是其中“能存值的节点”。
+
+就像这样：
+
+plaintext
+Copy
+Edit
+Trie（整体）
+└── TrieNode（普通节点）
+     └── TrieNodeWithValue<T>（叶子节点，保存值）
