@@ -1,0 +1,59 @@
+1. future.get() 的内部工作
+cpp// 简化版的 future::get() 实现原理
+T future<T>::get() {
+    std::unique_lock<std::mutex> lock(internal_mutex);
+    
+    // 如果值还没有设置，就等待
+    while (!value_is_ready) {
+        condition_variable.wait(lock);  // ← 阻塞在这里！
+    }
+    
+    return stored_value;  // 值准备好后返回
+}
+
+2. promise.set_value() 的内部工作
+cpp// 简化版的 promise::set_value() 实现原理
+void promise<T>::set_value(const T& value) {
+    std::unique_lock<std::mutex> lock(internal_mutex);
+    
+    stored_value = value;      // 存储值
+    value_is_ready = true;     // 标记为准备好
+    
+    condition_variable.notify_all();  // ← 唤醒所有等待的线程！
+}
+
+在 MoveBlocked 中的应用
+
+class MoveBlocked {
+private:
+    std::future<int> wait_;
+    bool waited_{false};
+
+public:
+    explicit MoveBlocked(std::future<int> wait) : wait_(std::move(wait)) {}
+    
+    // 移动构造函数
+    MoveBlocked(MoveBlocked &&that) noexcept {
+        if (!that.waited_) {
+            // ⚠️ 关键：这里会阻塞直到 promise.set_value() 被调用
+            that.wait_.get();  // 阻塞操作！
+        }
+        that.waited_ = waited_ = true;
+    }
+};
+
+// 使用示例
+std::promise<int> promise;
+MoveBlocked obj1(promise.get_future());
+
+// 启动线程，2秒后设置值
+std::thread t([&promise]() {
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    promise.set_value(42);  // ← 这行执行后，上面的 get() 被唤醒
+});
+
+// 这行会触发移动构造函数，然后在 get() 处阻塞2秒
+MoveBlocked obj2(std::move(obj1));  // 直到上面 set_value 执行才继续
+
+t.join();
+
