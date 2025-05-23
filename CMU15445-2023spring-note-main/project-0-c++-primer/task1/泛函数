@@ -1,0 +1,18 @@
+❓1. 这些是不是“泛函数”？
+是的！这些是模板函数（generic function / function template）：
+
+
+template <class T>
+auto Get(std::string_view key) const -> const T *;
+它是“支持任意类型 T 的泛型函数”
+
+编译时才会根据你用的类型实例化成具体版本（比如 int, std::string）
+
+❓2. 为什么没看到实现？
+你目前看到的是：
+
+// trie.h
+template <class T>
+auto Trie::Get(std::string_view key) const -> const T *;
+这只是声明（Declaration），没有看到定义（Definition）。
+
