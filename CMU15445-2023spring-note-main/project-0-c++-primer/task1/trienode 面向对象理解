@@ -1,0 +1,22 @@
+🧠 首先：你看到的这个结构是因为 children 是一个 map
+🌳 这个 map 是什么？
+
+std::map<char, std::shared_ptr<const TrieNode>> children;
+意思是：
+
+这个变量 children 是一个 “字典（map）”，它会把某个字符（char）映射到某个 TrieNode。
+
+你可以理解为：
+
+children['a'] = TrieNode("a")；
+children['b'] = TrieNode("b")；
+children['c'] = TrieNode("c")；
+
+std::map<char, shared_ptr<TrieNode>> children;
+等于你创建了一个箱子，里面可以放很多键值对（key:char → value:TrieNode
+-------------------------------------------------------------------------
+children = {
+  'a' → TrieNode,
+  'b' → TrieNode,
+  'c' → TrieNode
+}
