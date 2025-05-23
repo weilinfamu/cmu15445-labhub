@@ -1,1 +1,43 @@
+🧠 std::make_unique<TrieNode>() 背后到底做了什么？
+虽然你没有显式写出 new，但其实它底层就是用了 new！🌟
+
+✅ 简洁回答：
+std::make_unique<T>() 实际等价于 new T()，是在“堆”上创建新对象，而不是栈上。
+
+
+🔍 深入解释：
+🧱 std::make_unique<T>() 是 C++14 引入的语法糖：
+
+它本质是为了简化和安全替代这段代码：
+
+std::unique_ptr<TrieNode>(new(TrieNode()));
+➡️ 用 make_unique，就变成了：
+
+std::make_unique<TrieNode>();  // 更简洁、安全，不会忘写 new 或漏 catch
+✅ 举个代码验证：
+
+#include <iostream>
+#include <memory>
+
+class A {
+ public:
+  A() { std::cout << "A constructed\n"; }
+  ~A() { std::cout << "A destructed\n"; }
+};
+
+int main() {
+  auto ptr = std::make_unique<A>();  // 堆上 new A()
+}
+输出：
+A constructed
+A destructed
+🧪 如果你构造栈上对象是这样的：
+
+A a;  // 构造在栈上
+那么它不会用 new，也没有智能指针参与。
+
+
+
+
+
 
