@@ -18,10 +18,25 @@ Derived* d1 = static_cast<Derived*>(b); // 编译通过，即使 b 实际不是 
 ❗ 但要注意陷阱！
 Base* b = new Base();  // 真的是 Base 对象
 Derived* d = static_cast<Derived*>(b); // ⚠️ 编译能过，但运行时访问 Derived 成员就崩！
+----------------------------------------------------------------------------------------
+这就是为什么在有虚函数时推荐用：
+Derived* d = dynamic_cast<Derived*>(b); // ✅ 安全，失败会返回 nullptr
+----------------------------------------------------------------------------------------
+Base* b = new Derived(); 是安全的向上转型，虽然变量写的是 Base*，但内存中存的是 Derived 对象
+----------------------------------------------------------------------------------------
 
+Base* b = new Derived(); 是安全的向上转型，虽然变量写的是 Base*，但内存中存的是 Derived 对象
 
+static_cast<Derived*>(b) 是不安全向下转型，你必须确保 b 真的是指向 Derived 对象
 
+如果你不确定实际类型，就应该用 dynamic_cast
 
+Base* b1 = new Derived();
+Base* b2 = new Base();
+
+Derived* d1 = static_cast<Derived*>(b1); // ✅ 你知道 b1 来自 Derived，没问题
+Derived* d2 = static_cast<Derived*>(b2); // ❌ 你骗了编译器，运行时可能崩
+------------------------------------------------------------------------------------------
 
 
 
