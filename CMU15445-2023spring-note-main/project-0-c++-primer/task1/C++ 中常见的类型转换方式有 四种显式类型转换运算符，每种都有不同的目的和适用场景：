@@ -37,6 +37,12 @@ Base* b2 = new Base();
 Derived* d1 = static_cast<Derived*>(b1); // ✅ 你知道 b1 来自 Derived，没问题
 Derived* d2 = static_cast<Derived*>(b2); // ❌ 你骗了编译器，运行时可能崩
 ------------------------------------------------------------------------------------------
+# 这是你实际看到的
+* 1    Thread 0x7ffff7da0740     __pthread_clockjoin_ex(...) at pthread_join_common.c:145
+  2    Thread 0x7ffff7d9f700     futex_abstimed_wait_cancelable(...) at futex-internal.h:320
+
+# 可以视为这个结构（字段头人为加上）
+Id | Thread Addr / Target ID     | Frame (函数 + 文件位置)
 
 
 
