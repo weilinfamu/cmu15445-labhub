@@ -1,1 +1,30 @@
 C++ 中常见的类型转换方式有 四种显式类型转换运算符，每种都有不同的目的和适用场景：
+
+✅ 1. static_cast
+编译时检查
+用于基本类型转换、相关类之间上/下转型、void 指针转换等
+不能跨类层次安全检查
+----------------------------------------------------------------------------------------
+int i = 42;
+double d = static_cast<double>(i);  // int -> double
+
+class Base {};
+class Derived : public Base {};
+
+Base* b = new Derived();
+Derived* d1 = static_cast<Derived*>(b); // 编译通过，即使 b 实际不是 Derived*
+
+----------------------------------------------------------------------------------------
+❗ 但要注意陷阱！
+Base* b = new Base();  // 真的是 Base 对象
+Derived* d = static_cast<Derived*>(b); // ⚠️ 编译能过，但运行时访问 Derived 成员就崩！
+
+
+
+
+
+
+
+
+
+
