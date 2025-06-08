@@ -1,0 +1,25 @@
+✅ 先来建立概念：构造 vs 赋值、拷贝 vs 移动
+
+| 分类     | 构造函数                                  | 赋值操作符                               |
+| ------ | ------------------------------------- | ----------------------------------- |
+| **拷贝** | `MoveBlocked(const MoveBlocked &src)` | `operator=(const MoveBlocked &src)` |
+| **移动** | `MoveBlocked(MoveBlocked &&src)`      | `operator=(MoveBlocked &&src)`      |
+
+
+✅ 我们现在有这 4 个函数声明：
+
+// 拷贝构造：禁止（复制创建新对象）
+MoveBlocked(const MoveBlocked &) = delete;
+
+// 拷贝赋值：禁止（复制赋值已有对象）
+auto operator=(const MoveBlocked &) -> MoveBlocked & = delete;
+
+// ✅ 移动构造函数（将资源从旧对象搬过来）
+MoveBlocked(MoveBlocked &&that) noexcept { ... }
+
+// ✅ 移动赋值操作符（已存在对象，把资源从另一个搬进来）
+auto operator=(MoveBlocked &&that) noexcept -> MoveBlocked & { ... }
+
+
+
+
