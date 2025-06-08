@@ -1,0 +1,17 @@
+ 消息队列：
+
+std::queue<int> q;
+std::mutex mtx;
+std::condition_variable cv;
+
+std::thread producer([&]() {
+    std::unique_lock<std::mutex> lock(mtx);
+    q.push(42);
+    cv.notify_one();  // 通知消费者
+});
+
+std::thread consumer([&]() {
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [&] { return !q.empty(); });
+    std::cout << q.front(); q.pop();
+});
