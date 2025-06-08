@@ -1,0 +1,31 @@
+#include <optional>
+
+🔹作用
+std::optional<T> 是 C++17 引入的，用来表示一个**“可能有值，也可能没值”的变量**。
+
+🔹用途：
+就像 Python 里的 Optional[T]，或者 Java 里的 Optional<T>。
+std::optional<int> maybe_val;
+
+maybe_val = 42;
+if (maybe_val.has_value()) {
+    std::cout << maybe_val.value() << std::endl;
+}
+.has_value()：判断是否有值
+.value()：取出值（前提是你已经确认有值）
+
+✅ 1. std::optional<T> 的真正意义和类比语言中的对比
+📌 它的作用：表示“可能没有值”的场景，替代裸指针或魔法值（如 -1, ""）
+C++17	std::optional<int>	更安全地返回“有可能失败”的结果
+
+
+
+===========================================================================
+
+✅ 第2问：std::future 和消息队列的底层异步思想区别？
+
+
+
+
+
+
