@@ -1,0 +1,40 @@
+✅ 拆解说明（逐部分讲解）
+1. auto ... -> MoveBlocked &：函数的返回类型（Trailing Return Type）
+
+auto operator= (...) -> MoveBlocked &
+
+等价于：
+MoveBlocked &operator=(...)
+只是使用了 尾返回类型语法（trailing return type），更现代化写法（C++11 起支持），效果一样。
+
+MoveBlocked &：返回类型是对当前对象的引用（允许链式赋值 like a = b = c）。
+
+=====================================================================
+2. operator= (...)：这是 赋值运算符重载
+operator=(MoveBlocked &&that)
+operator=(MoveBlocked &&that)
+表示我们重载了 = 运算符，使得像：
+
+
+a = std::move(b);
+这样的语句可以通过 移动赋值 来实现。
+
+
+====================================================================
+3. 参数：MoveBlocked &&that
+MoveBlocked &&that
+MoveBlocked 是类名。
+
+&& 是右值引用（rvalue reference），表示 可以移动资源。
+that 是参数名，表示右值对象。
+代表 把另一个对象 that 的资源“偷走”，用于移动语义。
+
+MoveBlocked &operator=(MoveBlocked &&that) noexcept {
+    if (this != &that) {
+        // 释放旧资源
+        // 移动资源
+    }
+    return *this;
+}
+
+
