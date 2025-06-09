@@ -8,6 +8,14 @@ decltype(cursorRoot) parent = newRoot;
 decltype 可用来定义变量、函数返回值类型等
 
 
+✅ 举个例子：
+
+int x = 10;
+decltype(x) y = 20;  // y 的类型是 int
+
+std::vector<int> v;
+decltype(v) w = {1, 2, 3};  // w 的类型是 std::vector<int>
+
 
 
 
