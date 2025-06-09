@@ -1,0 +1,14 @@
+decltype(cursorRoot) parent = newRoot;
+✅ 一句话解释
+这句的作用是：自动推导变量 parent 的类型，让它和 cursorRoot 的类型一样，并用 newRoot 来初始化它。
+
+🔹 decltype(x) 是 C++11 引入的，用来获取一个表达式的“精确类型”。
+它不像 auto 那样只适用于初始化；
+
+decltype 可用来定义变量、函数返回值类型等
+
+
+
+
+
+  
