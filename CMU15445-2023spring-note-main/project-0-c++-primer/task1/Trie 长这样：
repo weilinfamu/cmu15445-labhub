@@ -1,10 +1,14 @@
 trie.Put("cat", 123);
 它会构建这样的结构（字符路径）：
 
-Trie Root
-  └── 'c' → TrieNode
-         └── 'a' → TrieNode
-                └── 't' → TrieNodeWithValue(123)
+[TrieNode Root]
+  |
+  +-- children_['c'] = TrieNode1（'c' 路径）
+       |
+       +-- children_['a'] = TrieNode2（'a' 路径）
+             |
+             +-- children_['t'] = TrieNodeWithValue(123)（'t' 路径）
+
 ====================================================================
 root_ (TrieNode)
 └── children_ = {
