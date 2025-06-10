@@ -1,0 +1,9 @@
+1. Put方法的参数​​
+template <class T>
+auto Trie::Put(std::string_view key, T value) const -> Trie {
+  // ...
+}
+​​key​​: 用户希望插入的​​字符串键​​（如"apple"）。
+​​value​​: 与该键关联的​​值​​（如42、"hello"等）。
+
+
