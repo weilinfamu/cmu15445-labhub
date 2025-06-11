@@ -1,0 +1,65 @@
+✅ 2. 为啥 Trie 可以 key.empty()，但 root 仍然有 value？
+
+🧠 示例：
+
+trie.Put("", 42);
+这意味着：
+
+“空字符串” 是一个合法 key，它的值是 42
+
+也就是说，这个值挂在 root 节点上，root 既是起点，也是值结点。
+==================================================================================
+✅ 对应代码解释：
+
+if (key.empty()) {
+  if (root_->is_value_node_) {
+
+意思是：
+
+如果你要删除的是 "" 这个 key
+
+那就去 root 节点看它有没有值
+如果有：把它值抹掉（变成普通 TrieNode）
+==================================================================================
+✅ 情况 A：真的是只有 root
+也就是只插入过：
+
+
+Put("", 123); // 空 key，值挂在 root 上
+这时 root 是 TrieNodeWithValue，且 .children_ 是空的：
+
+root (value=123, children_= {})
+那么删除时：
+
+
+auto newRoot = make_shared<TrieNode>(std::move(root_->Clone()->children_));
+你创建了一个新的 root 节点（不带值），并且：
+
+children_ 也确实是空的
+
+于是下面会返回 Trie{} 空 Trie ✅
+
+✅ 情况 B：root 有值，也有 children
+比如你执行了：
+
+Put("", 123);     // root 上挂值
+Put("abc", 456);  // root.children_ 不是空的！
+此时结构如下：
+
+
+root (value=123)
+ └── 'a' → 'b' → 'c' (value=456)
+那么当你调用 Remove("") 时：
+
+你希望的是：
+
+✅ 清除 root 的 value
+✅ 但是保留 'a' → 'b' → 'c' 这条路径！
+
+
+
+
+
+
+
+
