@@ -1,0 +1,8 @@
+auto Trie::Remove(std::string_view key) const -> Trie {
+const成员函数的详细解释：
+在C++中，类的成员函数如果被声明为const（如void func() const;），表示这个函数​​不会修改类的非静态成员变量​​（除非成员变量被显式声明为mutable）。它的核心作用是：
+
+​​保证对象只读​​：调用该函数时，传入的Trie对象（即*this）会被视为const Trie&类型，任何尝试修改其成员变量的操作（如root_ = ...）都会导致编译错误。
+​​允许常量对象调用​​：只有const Trie类型的对象（如const Trie t;）才能调用const成员函数；非const对象可以调用const和非const成员函数，但优先调用非const版本。
+​​示例理解​​：
+假设你有一个const Trie对象const_trie，你只能调用它的const成员函数（如这里的Remove），因为Remove承诺不会修改const_trie的内部状态（比如不会直接修改root_指针指向的内容）。实际修改是通过返回一个新的Trie对象实现的（写时复制，见后续代码）。
