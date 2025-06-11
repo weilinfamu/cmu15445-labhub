@@ -1,0 +1,24 @@
+✅ 核心概念：最后一个字符 = 终止节点，它才是挂了 value 的节点！
+Trie 是一种前缀树，每个字符一个节点，但值只存储在 key 最后一个字符对应的节点上：
+
+举个例子：
+cpp
+Copy
+Edit
+t.Put("cat", 42);
+生成结构如下：
+
+cpp
+Copy
+Edit
+root
+ └── 'c' → TrieNode
+       └── 'a' → TrieNode
+             └── 't' → TrieNodeWithValue<int>(42)
+'c', 'a' 是中间路径
+
+'t' 是终点，它才存值 42
+
+所以：
+
+Remove("cat") 删除的目标是："挂在 't' 上的值"
