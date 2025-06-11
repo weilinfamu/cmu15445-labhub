@@ -1,0 +1,28 @@
+✅ 问题 1：.children_ 是所有子节点的 map 吗？
+✔ 是的！.children_ 是整张 std::map<char, std::shared_ptr<const TrieNode>>
+这就是一个红黑树实现的 map，存的不是一个 key→value，而是：
+
+
+'a' → 子 TrieNode
+'b' → 子 TrieNode
+...
+你可以认为 .children_ 就是 root 所“拥有的所有一级分支”。
+
+🌳 举个例子：Trie 插入了多个 key：
+
+Put("apple", 1);
+Put("apt", 2);
+那么根节点会长这样：
+
+
+root
+ ├── 'a' → ...
+'a' 的节点下是：
+
+
+'a'
+ ├── 'p' → 'p' → 'l' → 'e' (value=1)
+ └── 'p' → 't' (value=2)
+此时 root 的 .children_ 只有 'a'，但 'a' 的子节点很深。这个 .children_ map 包含了所有一级分支的路径！
+
+✅ 所以 yes，这是一整张 map，可能连着整个子树
