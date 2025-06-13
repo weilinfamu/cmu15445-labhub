@@ -1,0 +1,73 @@
+第 1 阶段：掌握 TrieStore 的作用与设计
+🎯 目标：搞清楚 Trie 是啥、TrieStore 是干啥的
+✅ 建议阅读顺序：
+文件路径	作用
+src/include/primer/trie.h	定义了 Trie 的数据结构和操作（你会用）
+src/include/primer/trie_store.h	定义了 TrieStore 的 API（你要实现）
+test/trie_store_test.cpp	单元测试，看它测试了什么，理解输入输出
+
+✅ 做的事：
+看懂 TrieStore::Get, Put, Remove 要求什么样行为
+
+画一张简单图：Trie 是树，每个字符是一个 node，value 挂在叶子或终点节点上
+
+看懂注释：Get 的伪代码解释了锁的使用顺序、ValueGuard 保证了生命周期安全
+
+第 2 阶段：理解多线程 + 锁 + 并发读写控制
+🎯 目标：知道为什么我们要加锁，怎么避免竞态条件
+✅ 建议理解概念：
+C++ 中使用 std::mutex 做加锁，保护 shared data（如 root_）
+
+TrieStore::Get 只读 → 只需要锁一次 root_ 拷贝后即可释放
+
+Put / Remove 修改 Trie → 需要全程写锁保护
+
+✅ 示例代码片段解释（已在之前发过，建议对照写一遍）：
+root_lock_ 是为了保护 root_
+
+write_lock_ 是为了实现只允许一个写线程
+
+第 3 阶段：调试技巧 + 如何定位问题
+🎯 目标：定位错误、验证值是否存储和查找正确
+✅ Debug 技巧：
+加打印
+在 Put、Get、Remove 中加入：
+
+cpp
+Copy
+Edit
+std::cout << "[DEBUG] Put: key = " << key << std::endl;
+使用 GDB
+
+bash
+Copy
+Edit
+gdb ./test/trie_store_test
+b TrieStore::Put
+run
+用测试调试
+修改 test/trie_store_test.cpp：
+
+cpp
+Copy
+Edit
+// 添加测试用例自己验证：
+store.Put("apple", 100);
+auto val = store.Get<uint32_t>("apple");
+ASSERT_TRUE(val.has_value());
+ASSERT_EQ(val->Get(), 100);
+第 4 阶段：扩展 ValueGuard 理解 + 多类型支持
+🎯 目标：理解泛型 T 是怎么在模板里用的
+✅ 学习目标：
+template<class T> 实际上让你的 Get/Put 能支持多种数据类型（uint32_t, std::string, unique_ptr）
+
+ValueGuard<T> 是 RAII 封装，返回的值不能悬挂指针（引用的 Trie 被释放就不行）
+
+✅ 做法：
+改测试文件，加上多个类型测试：
+
+cpp
+Copy
+Edit
+store.Put("a", std::string("hello"));
+ASSERT_EQ(store.Get<std::string>("a")->Get(), "hello");
